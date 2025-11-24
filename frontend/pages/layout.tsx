@@ -1,3 +1,4 @@
+// frontend/pages/layout.tsx
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
@@ -9,24 +10,74 @@ export default function Layout({ children }: LayoutProps) {
   const router = useRouter();
   const [userName, setUserName] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Check token / user info in localStorage
-    const token = localStorage.getItem("infoai_token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1])); // decode JWT payload
-        setUserName(payload?.name || "User");
-      } catch {
-        setUserName("User");
+  // helper to read user from localStorage (preferred) then fallback to token payload
+  const refreshUserFromStorage = () => {
+    try {
+      const userJson = localStorage.getItem("infoai_user");
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        setUserName(user?.name ?? "User");
+        return;
       }
-    } else {
-      setUserName(null);
+
+      const token = localStorage.getItem("infoai_token");
+      if (token) {
+        const parts = token.split(".");
+        if (parts.length > 1) {
+          const payload = JSON.parse(atob(parts[1]));
+          setUserName(payload?.name ?? "User");
+          return;
+        }
+      }
+    } catch (e) {
+      // any parse error => fallback to generic
+      setUserName("User");
+      return;
     }
+    // if nothing found
+    setUserName(null);
+  };
+
+  useEffect(() => {
+    // initial read
+    refreshUserFromStorage();
+
+    // when another tab updates localStorage
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key) {
+        // some browsers send null key for clear -> just refresh
+        refreshUserFromStorage();
+        return;
+      }
+      if (e.key === "infoai_token" || e.key === "infoai_user") {
+        refreshUserFromStorage();
+      }
+    };
+
+    // custom event fired when chat page receives init and writes user to localStorage
+    const onUserChanged = () => refreshUserFromStorage();
+
+    // update on route change (in case login flow removed token etc)
+    const onRouteChange = () => refreshUserFromStorage();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("infoai_user_changed", onUserChanged as EventListener);
+    router.events.on("routeChangeComplete", onRouteChange);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("infoai_user_changed", onUserChanged as EventListener);
+      router.events.off("routeChangeComplete", onRouteChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem("infoai_token");
+    localStorage.removeItem("infoai_user");
     setUserName(null);
+    // also dispatch the event so other components update immediately
+    window.dispatchEvent(new Event("infoai_user_changed"));
     router.push("/");
   };
 
@@ -69,9 +120,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 w-full h-full px-4 sm:px-6 md:px-12 py-6">
-        {children}
-      </main>
+      <main className="flex-1 w-full h-full px-4 sm:px-6 md:px-12 py-6">{children}</main>
 
       {/* Footer */}
       <footer className="w-full bg-white border-t py-4 text-center text-sm text-slate-500">
