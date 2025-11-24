@@ -1,0 +1,34 @@
+{
+  "name": "infoai-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "nest start",
+    "start:dev": "nest start --watch"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/jwt": "^10.0.0",
+    "@nestjs/passport": "^10.0.0",
+    "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/websockets": "^10.0.0",
+    "@prisma/client": "^5.22.0",
+    "axios": "^1.13.2",
+    "cookie-parser": "^1.4.6",
+    "passport": "^0.6.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/passport-github2": "^1.2.9",
+    "@types/passport-google-oauth20": "^2.0.17",
+    "prisma": "^5.22.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.1.0"
+  }
+}
