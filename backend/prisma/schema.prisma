@@ -13,6 +13,7 @@ model User {
     email         String         @unique
     name          String?
     avatar        String?
+    instructions  String? 
     provider      String
     providerId    String
     createdAt     DateTime       @default(now())

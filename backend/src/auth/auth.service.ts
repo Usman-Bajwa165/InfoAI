@@ -1,3 +1,4 @@
+// backend/src/auth/auth.service.ts
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service';
@@ -24,8 +25,7 @@ export class AuthService {
       });
     }
 
-    // Generate JWT access token
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, name: user.name };
     const accessToken = this.jwtService.sign(payload);
     return { user, accessToken };
   }
