@@ -69,6 +69,13 @@ export default function Chat() {
   };
 
   useEffect(() => {
+    const el = document.querySelector("textarea");
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [input]);
+
+  useEffect(() => {
     // OAuth token in URL handling (same as before)
     const urlToken =
       typeof window !== "undefined"
@@ -214,16 +221,16 @@ export default function Chat() {
         )[s])
     );
 
-const renderMessage = (text: string) => {
-  const escaped = escapeHtml(text ?? "");
-  // support **bold** and __bold__ across lines
-  const withStrong = escaped
-    .replace(/\*\*([\s\S]+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/__([\s\S]+?)__/g, "<strong>$1</strong>");
-  // optional: support *em* -> <em>
-  const withEm = withStrong.replace(/\*([\s\S]+?)\*/g, "<em>$1</em>");
-  return { __html: withEm };
-};
+  const renderMessage = (text: string) => {
+    const escaped = escapeHtml(text ?? "");
+    // support **bold** and __bold__ across lines
+    const withStrong = escaped
+      .replace(/\*\*([\s\S]+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/__([\s\S]+?)__/g, "<strong>$1</strong>");
+    // optional: support *em* -> <em>
+    const withEm = withStrong.replace(/\*([\s\S]+?)\*/g, "<em>$1</em>");
+    return { __html: withEm };
+  };
 
   const saveInstructions = () => {
     const s = socketRef.current;
@@ -295,11 +302,13 @@ const renderMessage = (text: string) => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <aside className="md:col-span-1 bg-white p-4 rounded-xl shadow-md border border-slate-200 space-y-6 h-fit">
-          <div className="mb-4">
+        <aside className="md:col-span-1 bg-white p-4 rounded-xl shadow-md border border-slate-200 h-[80vh] flex flex-col">
+          {/* Mode Section */}
+          <div>
             <label className="block text-sm font-medium text-slate-700">
               Mode
             </label>
+
             <select
               value={mode}
               onChange={(e) => setMode(e.target.value)}
@@ -319,7 +328,8 @@ const renderMessage = (text: string) => {
             </div>
           </div>
 
-          <div className="mb-4">
+          {/* Instructions Section (scrollable) */}
+          <div className="mt-6 flex-1 flex flex-col overflow-hidden">
             <label className="block text-sm font-medium text-slate-700">
               Custom instructions
             </label>
@@ -328,7 +338,7 @@ const renderMessage = (text: string) => {
               <input
                 value={instructionInput}
                 onChange={(e) => setInstructionInput(e.target.value)}
-                placeholder="Add an instruction (applies to all prompts)"
+                placeholder="Add an instruction..."
                 className="flex-1 border rounded p-2"
               />
             </div>
@@ -350,7 +360,8 @@ const renderMessage = (text: string) => {
               </button>
             </div>
 
-            <div className="mt-3 text-sm text-slate-600">
+            {/* Scrollable saved instructions list */}
+            <div className="mt-3 text-sm text-slate-600 overflow-y-auto pr-2 custom-scroll flex-1">
               Saved instructions:
               <ul className="space-y-2 mt-2">
                 {savedInstructions.length === 0 && (
@@ -358,6 +369,7 @@ const renderMessage = (text: string) => {
                     No saved instructions
                   </li>
                 )}
+
                 {savedInstructions.map((ins) => (
                   <li
                     key={ins.id}
@@ -386,7 +398,7 @@ const renderMessage = (text: string) => {
         </aside>
 
         <section className="md:col-span-2 flex flex-col h-[70vh]">
-          <div className="flex-1 bg-white p-4 rounded-lg shadow overflow-y-auto">
+          <div className="flex-1 bg-white p-4 rounded-xl shadow-md border border-slate-200 overflow-y-auto custom-scroll">
             <div className="space-y-4">
               {messages.map((m) => (
                 <div
@@ -427,17 +439,17 @@ const renderMessage = (text: string) => {
             </div>
           )}
 
-          <div className="mt-3 bg-white p-3 rounded-lg shadow flex items-start gap-3">
+          <div className="mt-3 bg-white p-3 rounded-lg shadow flex items-start gap-3" style={{marginBottom:-60}}>
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              rows={2}
+              rows={1}
               placeholder={
                 guestQuotaExceeded
                   ? "Guest daily quota reached — sign in to continue"
                   : "Type your message..."
               }
-              className="flex-1 border rounded p-2 resize-none"
+              className="w-full border rounded-lg p-3 resize-none overflow-y-auto max-h-25"
               disabled={guestQuotaExceeded}
             />
 

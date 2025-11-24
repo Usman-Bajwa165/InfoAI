@@ -84,7 +84,7 @@ export default function Layout({ children }: LayoutProps) {
   const currentModel = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-2.5-flash";
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
+    <div className="flex flex-col w-full bg-slate-50 min-h-0 h-screen">
       {/* Header */}
       <header className="bg-white shadow-md w-full">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -120,7 +120,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 w-full h-full px-4 sm:px-6 md:px-12 py-6">{children}</main>
+      <main className="flex-1 w-full h-full px-4 sm:px-6 md:px-12 pb-2 pt-4 flex flex-col min-h-0">{children}</main>
 
       {/* Footer */}
       <footer className="w-full bg-white border-t py-4 text-center text-sm text-slate-500">
