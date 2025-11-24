@@ -301,7 +301,7 @@ export default function Chat() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-4" style={{marginLeft:-50,marginTop:-25}}>
         <aside className="md:col-span-1 bg-white p-4 rounded-xl shadow-md border border-slate-200 h-[80vh] flex flex-col">
           {/* Mode Section */}
           <div>
@@ -397,7 +397,7 @@ export default function Chat() {
           </div>
         </aside>
 
-        <section className="md:col-span-2 flex flex-col h-[70vh]">
+        <section className="md:col-span-2 flex flex-col h-[70vh]" style={{marginRight:-250}}>
           <div className="flex-1 bg-white p-4 rounded-xl shadow-md border border-slate-200 overflow-y-auto custom-scroll">
             <div className="space-y-4">
               {messages.map((m) => (
