@@ -99,7 +99,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center gap-4">
             {userName ? (
               <>
-                <span className="text-sm text-slate-700">Hello, {userName}</span>
+                <span className="text-sm text-slate-700 font-bold">Hello, {userName}</span>
                 <button
                   onClick={handleSignOut}
                   className="px-3 py-1 text-sm text-red-600 border rounded hover:bg-red-50"
